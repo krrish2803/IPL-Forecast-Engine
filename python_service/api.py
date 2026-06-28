@@ -159,7 +159,33 @@ def startup():
 
 @app.get('/health')
 def health():
-    return {'status': 'ok', 'model_loaded': _best_model is not None}
+    return {
+        'status': 'ok',
+        'model_loaded': _best_model is not None,
+        'preprocessor_loaded': _preprocessor is not None,
+        'feature_list_loaded': _feature_list is not None,
+        'metrics_loaded': _model_metrics is not None,
+    }
+
+
+@app.get('/debug')
+def debug_state():
+    import sklearn
+    import numpy
+    import shap
+    import joblib
+    return {
+        'python_version': sys.version,
+        'sklearn_version': sklearn.__version__,
+        'numpy_version': numpy.__version__,
+        'shap_version': shap.__version__,
+        'joblib_version': joblib.__version__,
+        'model_loaded': _best_model is not None,
+        'preprocessor_loaded': _preprocessor is not None,
+        'feature_list_type': str(type(_feature_list)),
+        'feature_list_keys': list(_feature_list.keys()) if _feature_list else None,
+        'metrics_loaded': _model_metrics is not None,
+    }
 
 
 @app.post('/train', response_model=TrainResponse)
