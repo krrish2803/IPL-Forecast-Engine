@@ -281,7 +281,22 @@ def get_teams():
         teams = sorted(set(df['batting_team'].unique()) | set(df['bowling_team'].unique()))
         return {'teams': teams}
     except (FileNotFoundError, KeyError):
-        return {'teams': []}
+        pass
+    try:
+        with open(os.path.join(REPORTS_DIR, 'cleaning_report.json')) as f:
+            report = json.load(f)
+        teams = report.get('unique_teams', [])
+        teams = [t for t in teams if t != 'Royal Challengers Bangalore']
+        return {'teams': sorted(teams)}
+    except (FileNotFoundError, KeyError, json.JSONDecodeError):
+        pass
+    ACTIVE_TEAMS = [
+        'Chennai Super Kings', 'Delhi Capitals', 'Gujarat Titans',
+        'Kolkata Knight Riders', 'Lucknow Super Giants', 'Mumbai Indians',
+        'Punjab Kings', 'Rajasthan Royals', 'Royal Challengers Bengaluru',
+        'Sunrisers Hyderabad',
+    ]
+    return {'teams': ACTIVE_TEAMS}
 
 
 @app.get('/venues')
@@ -294,6 +309,12 @@ def get_venues():
         venues = sorted(df['venue'].unique().tolist())
         return {'venues': venues}
     except (FileNotFoundError, KeyError):
+        pass
+    try:
+        with open(os.path.join(REPORTS_DIR, 'cleaning_report.json')) as f:
+            report = json.load(f)
+        return {'venues': sorted(report.get('venues', []))}
+    except (FileNotFoundError, KeyError, json.JSONDecodeError):
         return {'venues': []}
 
 
