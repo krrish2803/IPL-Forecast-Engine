@@ -64,38 +64,26 @@ def fallback_importance(model, X_processed, feature_names, reports_dir='reports'
         json.dump(importance, f, indent=2)
 
 
-def explain_prediction(features_row, model, preprocessor, feature_names, shap_values=None, explainer=None):
-    feature_names_clean = feature_names
+def explain_prediction(features_row, model, preprocessor, feature_names):
+    importances = getattr(model, 'feature_importances_', None)
+    if importances is None:
+        coef = getattr(model, 'coef_', None)
+        if coef is not None:
+            importances = np.abs(coef[0]) if coef.ndim > 1 else np.abs(coef)
+        else:
+            return [{'feature': 'Explanation unavailable', 'importance': 0, 'direction': 'neutral', 'value': 0}]
 
-    try:
-        import shap
-        if explainer is None:
-            if hasattr(model, 'feature_importances_'):
-                explainer = shap.TreeExplainer(model)
-            else:
-                return [{'feature': 'No SHAP available', 'importance': 0, 'direction': 'neutral', 'value': 0}]
-
-        row_processed = preprocessor.transform(features_row)
-        if hasattr(row_processed, 'toarray'):
-            row_processed = row_processed.toarray()
-
-        shap_row = explainer.shap_values(row_processed)
-        if isinstance(shap_row, list):
-            shap_row = shap_row[1]
-
-        explanations = []
-        for i, (name, val) in enumerate(zip(feature_names_clean, shap_row[0])):
-            explanations.append({
-                'feature': name,
-                'importance': float(abs(val)),
-                'direction': 'positive' if val > 0 else 'negative',
-                'value': float(val),
-            })
-
-        explanations.sort(key=lambda x: x['importance'], reverse=True)
-        return explanations[:5]
-    except Exception:
-        return [{'feature': 'Using model coefficients', 'importance': 0, 'direction': 'neutral', 'value': 0}]
+    paired = [(name, float(imp)) for name, imp in zip(feature_names, importances)]
+    paired.sort(key=lambda x: x[1], reverse=True)
+    return [
+        {
+            'feature': name,
+            'importance': imp,
+            'direction': 'neutral',
+            'value': imp,
+        }
+        for name, imp in paired[:5]
+    ]
 
 
 def generate_human_readable_explanation(explanations, team1, team2, proba):
