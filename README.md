@@ -170,6 +170,31 @@ npm run dev
 
 ---
 
+## Deploy to Netlify
+
+The frontend can be deployed to Netlify with minimal configuration.
+
+### Automatic Deploy (Git)
+
+1. Push this repo to GitHub
+2. In Netlify Dashboard → **Add new site** → **Import an existing project**
+3. Connect your GitHub repo
+4. Netlify auto-detects Next.js — build settings are pre-filled
+5. Add environment variable:
+   - `NEXT_PUBLIC_PYTHON_SERVICE_URL` — URL of your deployed FastAPI backend (e.g., `https://your-api.onrender.com`)
+6. Click **Deploy**
+
+### Manual Deploy (CLI)
+
+```bash
+npm install -g netlify-cli
+netlify deploy --prod
+```
+
+> **Note:** The FastAPI backend must be deployed separately (e.g., on Render, Railway, or a VPS). The frontend makes API calls to the URL set in `NEXT_PUBLIC_PYTHON_SERVICE_URL`.
+
+---
+
 ## API Endpoints
 
 | Method | Route | Description |

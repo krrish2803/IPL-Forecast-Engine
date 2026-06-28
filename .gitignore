@@ -7,6 +7,5 @@ __pycache__/
 .env.local
 catboost_info/
 .DS_Store
-data/raw/
 data/processed/*.csv
 
