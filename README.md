@@ -132,10 +132,12 @@ pip install -r requirements.txt
 npm install
 ```
 
-### 2. Add Data
+### 2. Add Data (optional — required only for retraining)
 
-Place your IPL ball-by-ball CSV in `data/raw/`. The expected columns include:
+Pre-trained model artifacts are already included, so the app works immediately. To retrain with your own data, place an IPL ball-by-ball CSV in `data/raw/`. The expected columns include:
 `match_id`, `season`, `venue`, `innings`, `batting_team`, `bowling_team`, `runs`, `wickets`, `balls`, `extras`, `toss_winner`, `toss_decision`, `stage`, `match_won_by`, `date_parsed`
+
+> **Note:** `data/raw/` is gitignored because the raw CSV exceeds GitHub's file size limit. The processed model artifacts (`models/*.joblib`) are tracked so the app works out of the box.
 
 ### 3. Start Backend
 
