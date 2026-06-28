@@ -1,0 +1,82 @@
+[
+  {
+    "feature": "team2_death_overs_economy",
+    "importance": 0.0113383871741869
+  },
+  {
+    "feature": "batting_momentum_team1",
+    "importance": 0.010737784552241605
+  },
+  {
+    "feature": "team1_death_overs_economy",
+    "importance": 0.009815873692782147
+  },
+  {
+    "feature": "team2_powerplay_avg",
+    "importance": 0.009664036794678442
+  },
+  {
+    "feature": "elo_team1",
+    "importance": 0.009448336131019522
+  },
+  {
+    "feature": "team1_death_overs_avg",
+    "importance": 0.008964131977315964
+  },
+  {
+    "feature": "elo_diff",
+    "importance": 0.008618382103234316
+  },
+  {
+    "feature": "team2_recent_economy",
+    "importance": 0.008338788761167563
+  },
+  {
+    "feature": "team1_boundary_rate",
+    "importance": 0.007848147214212784
+  },
+  {
+    "feature": "team1_recent_economy",
+    "importance": 0.00738199912551661
+  },
+  {
+    "feature": "team2_death_overs_avg",
+    "importance": 0.006991078412557267
+  },
+  {
+    "feature": "team1_venue_win_rate",
+    "importance": 0.006990283398488274
+  },
+  {
+    "feature": "chasing_win_rate_venue",
+    "importance": 0.006679637805398124
+  },
+  {
+    "feature": "team2_boundary_rate",
+    "importance": 0.006122421325377469
+  },
+  {
+    "feature": "team2_powerplay_wickets",
+    "importance": 0.006005722901488
+  },
+  {
+    "feature": "team1_recent_avg_runs",
+    "importance": 0.0059335109715421795
+  },
+  {
+    "feature": "team2_recent_avg_runs",
+    "importance": 0.005896031045254887
+  },
+  {
+    "feature": "team1_recent_avg_wickets",
+    "importance": 0.00588415014533915
+  },
+  {
+    "feature": "batting_momentum_team2",
+    "importance": 0.005666821198891286
+  },
+  {
+    "feature": "team2_nrr_proxy",
+    "importance": 0.0056254562727557625
+  }
+]

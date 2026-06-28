@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    @apply bg-background text-text-primary font-body antialiased;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-background;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-surface border border-border rounded-xl;
+  }
+
+  .glass-panel-hover {
+    @apply glass-panel transition-all duration-300 hover:border-accent/30 hover:shadow-[0_0_30px_rgba(0,212,170,0.05)];
+  }
+
+  .btn-primary {
+    @apply bg-accent text-background font-semibold px-6 py-3 rounded-lg
+           transition-all duration-300 hover:bg-accent-hover hover:shadow-[0_0_30px_rgba(0,212,170,0.3)]
+           active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply border border-border text-text-primary px-6 py-3 rounded-lg
+           transition-all duration-300 hover:border-accent hover:text-accent
+           active:scale-[0.98];
+  }
+
+  .metric-value {
+    @apply font-mono text-3xl font-bold text-text-primary;
+  }
+
+  .metric-label {
+    @apply text-sm text-muted font-medium;
+  }
+
+  .section-heading {
+    @apply font-heading text-3xl font-bold text-text-primary mb-2;
+  }
+
+  .section-subheading {
+    @apply text-text-secondary text-lg mb-8;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-accent to-[#00FFD1] bg-clip-text text-transparent;
+  }
+
+  .glow-line {
+    @apply h-px w-full bg-gradient-to-r from-transparent via-accent/50 to-transparent;
+  }
+}
