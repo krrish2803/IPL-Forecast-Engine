@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import time
+import traceback
 import pandas as pd
 import numpy as np
 import joblib
@@ -107,7 +108,7 @@ def load_artifacts():
             _feature_list = json.load(f)
         with open(os.path.join(REPORTS_DIR, 'model_metrics.json')) as f:
             _model_metrics = json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError) as e:
+    except Exception:
         pass
 
 
@@ -239,6 +240,8 @@ def get_metrics():
                 return json.load(f)
         except FileNotFoundError:
             raise HTTPException(status_code=404, detail='No metrics found. Run /train first.')
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f'Metrics JSON error: {type(e).__name__}: {e}')
     return _model_metrics
 
 
@@ -270,44 +273,48 @@ def get_venues():
 
 @app.post('/predict-match', response_model=PredictResponse)
 def predict_match_endpoint(req: PredictRequest):
-    if _best_model is None or _preprocessor is None:
-        load_artifacts()
-    if _best_model is None:
-        raise HTTPException(status_code=400, detail='No model trained. Run /train first.')
+    try:
+        if _best_model is None or _preprocessor is None:
+            load_artifacts()
+        if _best_model is None:
+            raise HTTPException(status_code=400, detail='No model trained. Run /train first.')
 
-    features = build_prediction_features(
-        req.team1, req.team2, req.venue,
-        req.toss_winner, req.toss_decision,
-        req.season, req.stage
-    )
+        features = build_prediction_features(
+            req.team1, req.team2, req.venue,
+            req.toss_winner, req.toss_decision,
+            req.season, req.stage
+        )
 
-    features_df = pd.DataFrame([features])
-    required_features = _feature_list.get('all_features', list(features.keys()))
-    missing = [c for c in required_features if c not in features_df.columns]
-    for m in missing:
-        features_df[m] = 0
-    features_df = features_df[required_features]
+        features_df = pd.DataFrame([features])
+        required_features = _feature_list.get('all_features', list(features.keys()))
+        missing = [c for c in required_features if c not in features_df.columns]
+        for m in missing:
+            features_df[m] = 0
+        features_df = features_df[required_features]
 
-    proba = predict_match(features_df, _best_model, _preprocessor, _feature_list)
-    team1_proba = proba
-    team2_proba = 1 - proba
+        proba = predict_match(features_df, _best_model, _preprocessor, _feature_list)
+        team1_proba = proba
+        team2_proba = 1 - proba
 
-    processed = _preprocessor.transform(features_df)
-    if hasattr(processed, 'toarray'):
-        processed = processed.toarray()
+        processed = _preprocessor.transform(features_df)
+        if hasattr(processed, 'toarray'):
+            processed = processed.toarray()
 
-    all_feature_names = _feature_list.get('numeric_features', []) + _feature_list.get('categorical_features', [])
-    explanations = explain_prediction(features_df, _best_model, _preprocessor, all_feature_names)
+        all_feature_names = _feature_list.get('numeric_features', []) + _feature_list.get('categorical_features', [])
+        explanations = explain_prediction(features_df, _best_model, _preprocessor, all_feature_names)
 
-    readable = generate_human_readable_explanation(explanations, req.team1, req.team2, proba)
+        readable = generate_human_readable_explanation(explanations, req.team1, req.team2, proba)
 
-    return PredictResponse(
-        team1_win_probability=round(team1_proba, 4),
-        team2_win_probability=round(team2_proba, 4),
-        confidence=round(max(proba, 1 - proba), 4),
-        predicted_winner=readable['predicted_winner'],
-        explanation=readable,
-    )
+        return PredictResponse(
+            team1_win_probability=round(team1_proba, 4),
+            team2_win_probability=round(team2_proba, 4),
+            confidence=round(max(proba, 1 - proba), 4),
+            predicted_winner=readable['predicted_winner'],
+            explanation=readable,
+        )
+    except Exception as e:
+        tb = traceback.format_exc()
+        raise HTTPException(status_code=500, detail=f'{type(e).__name__}: {e}\n{tb}')
 
 
 @app.post('/simulate-season', response_model=SimulateResponse)
