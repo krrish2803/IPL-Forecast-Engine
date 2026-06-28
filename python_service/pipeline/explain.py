@@ -73,7 +73,7 @@ def explain_prediction(features_row, model, preprocessor, feature_names, shap_va
             if hasattr(model, 'feature_importances_'):
                 explainer = shap.TreeExplainer(model)
             else:
-                return [{'feature': 'No SHAP available', 'importance': 0, 'direction': 'neutral'}]
+                return [{'feature': 'No SHAP available', 'importance': 0, 'direction': 'neutral', 'value': 0}]
 
         row_processed = preprocessor.transform(features_row)
         if hasattr(row_processed, 'toarray'):
@@ -95,7 +95,7 @@ def explain_prediction(features_row, model, preprocessor, feature_names, shap_va
         explanations.sort(key=lambda x: x['importance'], reverse=True)
         return explanations[:5]
     except Exception:
-        return [{'feature': 'Using model coefficients', 'importance': 0, 'direction': 'neutral'}]
+        return [{'feature': 'Using model coefficients', 'importance': 0, 'direction': 'neutral', 'value': 0}]
 
 
 def generate_human_readable_explanation(explanations, team1, team2, proba):
