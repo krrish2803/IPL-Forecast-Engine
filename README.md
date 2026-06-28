@@ -191,7 +191,26 @@ npm install -g netlify-cli
 netlify deploy --prod
 ```
 
-> **Note:** The FastAPI backend must be deployed separately (e.g., on Render, Railway, or a VPS). The frontend makes API calls to the URL set in `NEXT_PUBLIC_PYTHON_SERVICE_URL`.
+### Deploy Backend to Render
+
+1. Push the repo to GitHub
+2. In Render Dashboard → **New +** → **Web Service**
+3. Connect your GitHub repo
+4. Fill in:
+
+| Field | Value |
+|---|---|
+| Name | `ipl-forecast-engine-api` |
+| Runtime | `Python 3` |
+| Build Command | `pip install -r requirements.txt` |
+| Start Command | `uvicorn python_service.api:app --host 0.0.0.0 --port $PORT` |
+| Plan | Free |
+
+5. Click **Create Web Service**
+
+Render auto-deploys on every push. Once deployed, copy the URL (e.g., `https://ipl-forecast-engine-api.onrender.com`) and set it as `NEXT_PUBLIC_PYTHON_SERVICE_URL` in your Netlify env vars.
+
+> **Note:** On the free plan, the backend may spin down after inactivity. The first request after idle will take ~30s to cold-start.
 
 ---
 
